@@ -23,4 +23,19 @@ class HelperFunction {
         }
         return false;
     }
+
+    public static function notify_editor($post_id) {
+        $post = get_post($post_id);
+        $author_name = get_the_author_meta('display_name', $post->post_author);
+
+        //wordpress notification
+        $message = "An article titled {$post->post_title} has been sent for review by {$author_name}";
+        $edit_link = admin_url("post.php?post={$post_id}&action=edit");
+
+        $editors = get_users(['role'=>'editor']);
+        foreach($editors as $editor) {
+            wp_mail($editor->user_email, 'New article submitted for review'.'\n\nyou can see it here', $message, $edit_link);
+        }
+    }
+
 }

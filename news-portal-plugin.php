@@ -35,3 +35,19 @@ function news_portal_assets() {
     );
 }
 add_action('admin_enqueue_scripts', 'news_portal_assets');
+
+add_action('admin_init', function() {
+    if (isset($_GET['test_email'])) {
+        $to = 'editor@example.com'; // Replace with the editor's email
+        $subject = 'Test Email from WordPress';
+        $message = 'This is a test email to check the wp_mail functionality.';
+        $headers = ['Content-Type: text/html; charset=UTF-8'];
+
+        if (wp_mail($to, $subject, $message, $headers)) {
+            echo 'Test email sent successfully!';
+        } else {
+            echo 'Failed to send test email.';
+        }
+        exit;
+    }
+});

@@ -89,7 +89,6 @@ class Author_Dashboard {
 
     public function article_creation_form() {
         echo '<form method="post" action="" enctype="multipart/form-data">';
-        wp_nonce_field('article_submission', '_wpnonce');
         echo '<input type="hidden" name="action" value="submit_article">';
 
         //the title
@@ -139,7 +138,6 @@ class Author_Dashboard {
         }
         echo '<h1>Edit Article Form</h1>';
         echo '<form method="post" action="" enctype="multipart/form-data">';
-        wp_nonce_field('article_submission', '_wpnonce');
         echo '<input type="hidden" name="action" value="update_article">';
         echo '<input type="hidden" name="post_id" value="' . esc_attr($post_id) . '">';
 
@@ -178,10 +176,6 @@ class Author_Dashboard {
 
     public function handleArticleSubmission() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Verify the nonce for security
-            if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'article_submission')) {
-                wp_die('Invalid nonce verification.');
-            }
     
             // Check for action
             if (isset($_POST['action'])) {
@@ -286,6 +280,9 @@ class Author_Dashboard {
                 set_post_thumbnail($post_id, $featured_image_id);
             }
         }
+
+        //notifying the editor
+        HelperFunction::notify_editor($post_id);
     
         // Redirect
         wp_safe_redirect(admin_url('admin.php?page=author-dashboard&success=1'));
